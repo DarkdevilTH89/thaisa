@@ -1,0 +1,94 @@
+name: Build ไทยSA Desktop Installers (.exe & .dmg)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-windows:
+    name: Windows Installer (.exe)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python backend & run pytest
+        shell: pwsh
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/Scripts/pip install -r backend/requirements.txt pyinstaller
+          backend/.venv/Scripts/pytest backend/tests -v
+
+      - name: Build Python sidecar binary
+        shell: pwsh
+        run: |
+          cd backend
+          ./.venv/Scripts/pyinstaller --noconfirm --clean thaisa_backend.spec
+
+      - name: Build frontend, Electron & Windows .exe
+        shell: pwsh
+        run: |
+          npm install
+          npm --prefix frontend install
+          npm --prefix electron install
+          npm --prefix frontend run build
+          npm --prefix electron run build
+          npm run dist:win
+
+      - name: Upload Windows .exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thaisa-windows-x64
+          path: release/thaisa-*-win-x64.exe
+
+  build-macos:
+    name: macOS Disk Image (.dmg)
+    strategy:
+      matrix:
+        include:
+          - os: macos-14
+            arch: arm64
+          - os: macos-13
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python backend & run pytest
+        run: |
+          python3 -m venv backend/.venv
+          backend/.venv/bin/pip install -r backend/requirements.txt pyinstaller
+          backend/.venv/bin/pytest backend/tests -v
+
+      - name: Build macOS Python sidecar binary
+        run: |
+          cd backend
+          ./.venv/bin/pyinstaller --noconfirm --clean thaisa_backend.spec
+
+      - name: Build frontend, Electron & macOS .dmg
+        run: |
+          npm install
+          npm --prefix frontend install
+          npm --prefix electron install
+          npm --prefix frontend run build
+          npm --prefix electron run build
+          npx electron-builder --mac --${{ matrix.arch }} --config electron-builder.yml
+
+      - name: Upload macOS .dmg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thaisa-macos-${{ matrix.arch }}
+          path: release/thaisa-*-macos-${{ matrix.arch }}.dmg
