@@ -1,6 +1,6 @@
 # ไทยSA (`thaisa`)
 
-**100% Offline Cross-Platform Bilingual (Thai + English) Qualitative &  Data Analysis Desktop Application**
+**100% Offline Cross-Platform Bilingual (Thai + English) Qualitative Data Analysis Desktop Application**
 
 **ไทยSA** (`thaisa`) is a local-first desktop research suite for macOS and Windows designed specifically for bilingual **English (primary) and Thai (secondary)** qualitative inquiry. Built around **Braun & Clarke’s six-phase Reflexive Thematic Analysis**, the application keeps all transcripts, codebooks, participant scores, and reflexive memos stored locally in SQLite while supporting offline AI assistance via **Ollama** (plus an optional opt-in Google AI Studio API key toggle).
 
