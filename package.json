@@ -1,0 +1,22 @@
+{
+  "name": "thaisa",
+  "version": "0.1.0",
+  "private": true,
+  "main": "electron/dist/main.js",
+  "author": "ไทยSA Research Team",
+  "description": "ไทยSA — 100% Offline Bilingual Qualitative & Mixed-Methods Data Analysis Desktop Application (Braun & Clarke Reflexive Thematic Analysis)",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:electron": "npm --prefix electron run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:electron": "npm --prefix electron run build",
+    "typecheck": "npm --prefix frontend run typecheck && npm --prefix electron run typecheck",
+    "test:backend": "backend/.venv/Scripts/pytest backend/tests -v",
+    "dist:win": "electron-builder --win --x64 --config electron-builder.yml",
+    "dist:mac": "electron-builder --mac --config electron-builder.yml"
+  },
+  "devDependencies": {
+    "electron": "^31.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

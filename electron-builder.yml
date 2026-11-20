@@ -1,0 +1,53 @@
+# Cross-platform packaging configuration for ไทยSA (internal slug: thaisa)
+# Uses ASCII `thaisa` for binaries, installers, and build dirs while displaying "ไทยSA" to users.
+
+appId: org.thaisa.app
+productName: "ไทยSA"
+executableName: thaisa
+
+directories:
+  output: release
+  buildResources: assets/icons
+
+files:
+  - electron/dist/**/*
+  - frontend/dist/**/*
+  - assets/icons/icon.png
+  - package.json
+  - "!backend/**"
+  - "!frontend/node_modules/**"
+  - "!electron/node_modules/**"
+
+extraResources:
+  - from: backend/dist/thaisa-backend
+    to: backend
+  - from: assets/fonts
+    to: fonts
+
+mac:
+  category: public.app-category.education
+  icon: assets/icons/icon.png
+  target:
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+  artifactName: "thaisa-${version}-macos-${arch}.${ext}"
+
+dmg:
+  title: "ไทยSA"
+
+win:
+  icon: assets/icons/icon.ico
+  signAndEditExecutable: false
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: "thaisa-${version}-win-${arch}.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: "ไทยSA"
+  uninstallDisplayName: "ไทยSA"
